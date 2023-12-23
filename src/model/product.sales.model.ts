@@ -1,5 +1,6 @@
 import { DataType, Column, Model, Table, BelongsTo, ForeignKey } from 'sequelize-typescript';
 import { OrderCart } from './cart.model';
+import { MstProduct } from './mst.product.model';
 
 @Table({tableName: "product_sales"})
 export class ProductSales extends Model<ProductSales> {
@@ -19,6 +20,20 @@ export class ProductSales extends Model<ProductSales> {
         allowNull: false
     })
     cart_id:number
+    
+    @BelongsTo(() => MstProduct, {
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL",
+        hooks: true
+    })
+    product_detail: MstProduct
+
+    @ForeignKey(() => MstProduct)
+    @Column({
+        type: DataType.INTEGER,
+        allowNull: false
+    })
+    product_id:number
 
 //===================DATABASE RELATION=====================================
     @Column({

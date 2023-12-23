@@ -20,6 +20,11 @@ const sequelizeConfig: SequelizeModuleOptions = {
     timestamps: true,
     underscored: true,
   },
+  
+};
+export const getJwtSecret = (): string | undefined => {
+  return process.env.JWT_SECRET;
 };
 
 export default sequelizeConfig;
+
