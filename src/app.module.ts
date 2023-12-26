@@ -14,12 +14,13 @@ import {Admin} from './model/admin.model';
 import { AuthService } from './services/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { AdminController } from './controller/admin.controller';
+import { MstProduct } from './model/mst.product.model';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true } ),
     SequelizeModule.forRoot(sequelizeConfig),
-    SequelizeModule.forFeature([OrderSales, OrderCart, ProductSales,Admin]),
+    SequelizeModule.forFeature([OrderSales, OrderCart, ProductSales,Admin, MstProduct]),
     JwtModule.register({
       secret:process.env.JWT_SECRET,
       signOptions: {expiresIn:'3h'}
