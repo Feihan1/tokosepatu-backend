@@ -15,18 +15,39 @@ import { AuthService } from './services/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { AdminController } from './controller/admin.controller';
 import { MstProduct } from './model/mst.product.model';
+import { ProductController } from './controller/products.controller';
+import { ProductService } from './services/products.service';
+import { MulterModule } from '@nestjs/platform-express';
+import { multerConfig } from './config/multer.config';
+import { HttpModule } from '@nestjs/axios';
+import * as multer from 'multer'; 
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true } ),
     SequelizeModule.forRoot(sequelizeConfig),
-    SequelizeModule.forFeature([OrderSales, OrderCart, ProductSales,Admin, MstProduct]),
+    SequelizeModule.forFeature([OrderSales, OrderCart, ProductSales,Admin,MstProduct]),
+    MulterModule.register({
+      storage: multer.memoryStorage(), // Menggunakan penyimpanan di memori
+      limits: {
+        fileSize: 1024 * 1024 * 10, // Ukuran file maksimum (contoh: 10 MB)
+      },
+      fileFilter: (req, file, cb) => {
+        const allowedMimes = ['image/jpeg', 'image/png', 'image/jpg'];
+        if (allowedMimes.includes(file.mimetype)) {
+          cb(null, true);
+        } else {
+          cb(new Error('Invalid file type. Only JPEG, PNG, and GIF files are allowed.'), false);
+        }
+      },
+    }),
+    HttpModule,
     JwtModule.register({
       secret:process.env.JWT_SECRET,
       signOptions: {expiresIn:'3h'}
     })
   ],
-  controllers: [OrderController, CartController,MidtransController,AdminController],
-  providers: [OrderService, CartService,AuthService],
+  controllers: [OrderController, CartController,MidtransController,AdminController,ProductController],
+  providers: [OrderService, CartService,AuthService,ProductService],
 })
 export class AppModule {}
