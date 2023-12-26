@@ -14,9 +14,28 @@ product_item: ProductSales[]
 //===================DATABASE RELATION=====================================
     @Column({
         type: DataType.STRING,
+         allowNull: false
+    })
+    item_code: string;
+
+
+    @Column({
+        type: DataType.STRING,
         allowNull: false
     })
     item_name: string;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: false
+    })
+    item_brand: string;
+    
+    @Column({
+        type: DataType.STRING,
+        allowNull: false
+    })
+    item_category: string;
 
     @Column({
         type: DataType.INTEGER,
@@ -30,15 +49,23 @@ product_item: ProductSales[]
     })
     item_amount: number;
 
-    // @Column({
-    //     type: DataType.STRING,
-    //     allowNull: false
-    // })
-    // item_image: string;
-    
     @Column({
         type: DataType.STRING,
         allowNull: false
     })
-    item_code: string;
+    item_gender: string;
+
+  
+    @Column({
+        type: DataType.STRING,
+        allowNull: true,
+      })
+      item_image_url: string; 
+
+    @Column({
+        type: DataType.BOOLEAN,
+        defaultValue: true
+    }) 
+
+    active: boolean;
 }
