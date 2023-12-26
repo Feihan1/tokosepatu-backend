@@ -1,10 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Sequelize } from 'sequelize';
-import sequelizeConfig from 'src/config/db.config';
+import sequelize from 'sequelize';
 import { CreateTransactionRequest, OrderPaymentStatus } from 'src/interfaces/order.interfaces.dto';
 import { OrderCart } from 'src/model/cart.model';
+import { MstProduct } from 'src/model/mst.product.model';
 import { OrderSales } from 'src/model/order.model';
 import { ProductSales } from 'src/model/product.sales.model';
 
@@ -14,7 +13,8 @@ export class OrderService {
   constructor(
     @InjectModel(OrderCart) private Cart: typeof OrderCart,
     @InjectModel(OrderSales) private transactionModel: typeof OrderSales,
-    @InjectModel(ProductSales) private CartItems: typeof ProductSales
+    @InjectModel(ProductSales) private CartItems: typeof ProductSales,
+    @InjectModel(MstProduct) private mstProduct: typeof MstProduct
   ){}
 
 
@@ -28,14 +28,26 @@ export class OrderService {
 
   async createTransactionData(payload: CreateTransactionRequest): Promise<any> {
     let totalAmount = 0;
-    const cartData = await this.Cart.findOne({where: {id: payload.cart_id}, include: { model: ProductSales }})
-
-    for( const item of cartData.dataValues.product_item ){
-      let sumAmount: number = item.dataValues.item_qty * item.dataValues.item_amount;
-      totalAmount += sumAmount
+    const transaction = await this.Cart.sequelize.transaction();
+    try{
+      const cartData = await this.Cart.findOne({where: {id: payload.cart_id}, include: { model: ProductSales }, transaction})
+  
+      for(const item of cartData.dataValues.product_item ){
+        let sumAmount: number = item.dataValues.item_qty * item.dataValues.item_amount;
+        totalAmount += sumAmount
+        const decreaseQtyProduct = await this.mstProduct.update({item_qty: sequelize.literal('item_qty - 1')}, { where: { id:  item.product_id}, transaction });
+      }
+      
+      const createOrder = await this.transactionModel.create({...payload, total_amount: totalAmount} , {transaction});
+      if(createOrder.dataValues){
+        await transaction.commit();
+        return createOrder;
+      }
+    }catch(error){
+      console.log(error);
+      await transaction.rollback();
+      throw new InternalServerErrorException('Whoops. Internal server error');
     }
-
-    return await this.transactionModel.create({...payload, total_amount: totalAmount});
   }
 
   async updateTransactionStatus(id: string): Promise<any> {

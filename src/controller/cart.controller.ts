@@ -8,6 +8,12 @@ import { CartService } from 'src/services/cart.service';
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
+  @Get("/get-products")
+  async readAllMstProducts(@Res() res): Promise<any> {
+    const exists = await this.cartService.readAllMstProducts(); 
+    return res.status(HttpStatus.OK).json({message: "Success", data: exists});
+  }
+
   @Get("/read/:id")
   async readCart(@Res() res, @Param('id') cartId: string): Promise<any> {
     const exists = await this.cartService.readCartData(cartId);
@@ -46,7 +52,6 @@ export class CartController {
             message: "Whoops. Error Occured"
         });
     }
-
   }
 
   @Patch("/add/item")

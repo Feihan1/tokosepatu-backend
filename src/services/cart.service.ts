@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Order, Sequelize } from 'sequelize';
+import { Op, Order, Sequelize } from 'sequelize';
 import { CreateProductSales, ProductSalesDTO, RemoveItemFromCartRequest, RemoveItemRequest } from 'src/interfaces/cart.interfaces.dto';
 import { OrderPaymentStatus } from 'src/interfaces/order.interfaces.dto';
 import { OrderCart } from 'src/model/cart.model';
+import { MstProduct } from 'src/model/mst.product.model';
 import { OrderSales } from 'src/model/order.model';
 import { ProductSales } from 'src/model/product.sales.model';
 
@@ -13,8 +14,13 @@ export class CartService {
   constructor(
     @InjectModel(OrderCart) private Cart: typeof OrderCart,
     @InjectModel(OrderSales) private transactionModel: typeof OrderSales,
-    @InjectModel(ProductSales) private CartItems: typeof ProductSales
+    @InjectModel(ProductSales) private CartItems: typeof ProductSales,
+    @InjectModel(MstProduct) private mstProduct: typeof MstProduct
   ) {}
+  
+  async readAllMstProducts(): Promise<any> {
+    return await this.mstProduct.findAll({where: { active: true, item_qty: {[Op.gt]: 0 }}});
+  }
 
   async createCart(): Promise<any> {
     return await this.Cart.create({});
