@@ -1,4 +1,4 @@
-import { Controller, Post, Res, Body, Get, Param, UploadedFile, UseInterceptors, Put, Patch } from "@nestjs/common";
+import { Controller, Post, Res, Body, Get, Param, UploadedFile, UseInterceptors, Put, Patch, Delete } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiTags } from "@nestjs/swagger";
 import { CreateMstProduct, UpdateProductDto } from "src/interfaces/admin.interface";
@@ -50,5 +50,10 @@ async updateProduct(@Param('id') id: string, @Body() updateProductDto: UpdatePro
     console.error('Error creating product:', error);
     throw new Error('Error creating product');
   }
+}
+
+@Delete('/delete/:id')
+async deleteProduct(@Param('id') id: string) {
+  return this.productService.deleteProduct(id);
 }
 }

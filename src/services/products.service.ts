@@ -20,7 +20,16 @@ export class ProductService {
 
   async getAllProducts(): Promise<any> {
     try {
-      const products = await this.Product.findAll({where:{active:true},order: [['id', 'ASC']]});
+      const products = await this.Product.findAll({order: [['id', 'ASC']]});
+      for (const product of products) {
+        // Jika item_qty sama dengan 0, atur active menjadi false
+        if (product.item_qty === 0) {
+          product.active = false;
+        }
+        if (product.item_qty !== 0) {
+          product.active = true
+        }
+      }
       return products;
     } catch (error) {
       throw new Error("Failed to fetch products");
@@ -87,4 +96,16 @@ export class ProductService {
 
     return product;
   }
+
+  async deleteProduct(id: string): Promise<any> {
+    const product = await this.Product.findByPk(id);
+
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${id} not found`);
+    }
+
+    await product.update({ item_qty: 0} ,  { where: { id } });
+
+    return 'Produk Telah Di Hapus Untuk User';
+}
 }
