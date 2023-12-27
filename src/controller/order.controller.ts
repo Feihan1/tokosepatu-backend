@@ -32,7 +32,7 @@ export class OrderController {
       if(!exists){
         return res.status(HttpStatus.BAD_REQUEST).json({message: "Cannot find data"});
       } else {
-        const invoiceData = await this.orderService.updateTransactionStatus(body.order_id);
+        const invoiceData = await this.orderService.updateTransactionStatus(body);
         const deleteCart = await this.cartService.deleteCart(exists.dataValues.id);
         return res.status(HttpStatus.OK).json({message: "Success"});
       }

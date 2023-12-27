@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import sequelize from 'sequelize';
-import { CreateTransactionRequest, OrderPaymentStatus } from 'src/interfaces/order.interfaces.dto';
+import { CreateTransactionRequest, OrderPaymentStatus, UpdateStatusNotification } from 'src/interfaces/order.interfaces.dto';
 import { OrderCart } from 'src/model/cart.model';
 import { MstProduct } from 'src/model/mst.product.model';
 import { OrderSales } from 'src/model/order.model';
@@ -50,7 +50,23 @@ export class OrderService {
     }
   }
 
-  async updateTransactionStatus(id: string): Promise<any> {
-    return await this.transactionModel.update({ payment_status: OrderPaymentStatus.SUCCESS }, {where: { transaction_number: id }});
+  async updateTransactionStatus(notification: UpdateStatusNotification): Promise<void> {
+    const { order_id, payment_type } = notification;
+
+    try {
+      const order = await this.transactionModel.findOne({
+        where: { transaction_number: order_id },
+      });
+
+      if (order) {
+        order.payment_method = payment_type; // Update payment method based on received notification
+        order.payment_status = OrderPaymentStatus.SUCCESS; // Assuming transaction is successful
+        await order.save();
+      } else {
+        throw new Error('Order not found');
+      }
+    } catch (error) {
+      throw new Error('Failed to update transaction status');
+    }
   }
 }

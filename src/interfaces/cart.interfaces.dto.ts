@@ -43,6 +43,7 @@ export class CreateCartRequest {
 
 export type CreateProductSales = {
     cart_id: number
+    product_id:number
     item_name: string
     item_qty: number
     item_amount: number
@@ -63,7 +64,7 @@ export type ProductSalesDTO = {
 export class AddCartRequest {
     @ApiProperty()
     cart_id: number;
-
+    product_id: number;
     @ApiProperty({type: CreateProductRequest, isArray: true})
     product_data: CreateProductRequest[];
 }

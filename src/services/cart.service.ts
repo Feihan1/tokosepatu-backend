@@ -38,8 +38,8 @@ export class CartService {
     return await this.CartItems.findByPk(id);
   }
 
-  async readSpecificCartItems(payload: {name: string, product_id: string, cartId: number}): Promise<any> {
-    return await this.CartItems.findOne({where: {item_name: payload.name, item_code: payload.product_id, cart_id: payload.cartId}});
+  async readSpecificCartItems(payload: {name: string, productId: string,size:number, cartId: number}): Promise<any> {
+    return await this.CartItems.findOne({where: {item_name: payload.name, item_code: payload.productId, item_size:payload.size, cart_id: payload.cartId}});
   }
 
   async updateCartItems(payload: {item: ProductSalesDTO, qty: number}): Promise<any> {

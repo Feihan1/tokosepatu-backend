@@ -33,10 +33,11 @@ export class CartController {
   async createCart(@Res() res, @Body() payload: CreateCartRequest): Promise<any> {
     try {
         const cartData = await this.cartService.createCart();
-    
+        const product_id = await this.cartService.readAllMstProducts();
         for(const item of payload.product_data){
           await this.cartService.createCartItems({
               cart_id: cartData.dataValues.id,
+              product_id: product_id.id,
               item_name: item.product_name,
               item_qty: item.product_qty,
               item_amount: item.product_amount,
@@ -52,6 +53,7 @@ export class CartController {
             message: "Whoops. Error Occured"
         });
     }
+
   }
 
   @Patch("/add/item")
@@ -66,7 +68,7 @@ export class CartController {
       }
 
       for(const item of payload.product_data){
-        const exists = await this.cartService.readSpecificCartItems({name: item.product_name, product_id: item.product_code, cartId: payload.cart_id })
+        const exists = await this.cartService.readSpecificCartItems({name: item.product_name, productId: item.product_code,size: item.product_size, cartId: payload.cart_id })
 
         if(exists){
           await this.cartService.updateCartItems({item: exists, qty: item.product_qty});
@@ -75,6 +77,7 @@ export class CartController {
 
         await this.cartService.createCartItems({ 
           cart_id: payload.cart_id,
+          product_id: payload.product_id,
           item_name: item.product_name,
           item_qty: item.product_qty,
           item_amount: item.product_amount,

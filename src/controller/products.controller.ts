@@ -24,7 +24,6 @@ export class ProductController {
     }
   }
 
-
   @Get("/list")
   async getAllProducts(@Res() res): Promise<any> {
     try {
@@ -55,5 +54,11 @@ async updateProduct(@Param('id') id: string, @Body() updateProductDto: UpdatePro
 @Delete('/delete/:id')
 async deleteProduct(@Param('id') id: string) {
   return this.productService.deleteProduct(id);
+}
+
+@Get('/transaction-list')
+async readTransaction (@Res()res) : Promise<any> {
+const response = await this.productService.readTransactionList();
+  res.status(200).json({ message: "Sukses",data:response });
 }
 }
