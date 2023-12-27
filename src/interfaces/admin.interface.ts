@@ -12,3 +12,8 @@ export interface Admin {
     item_gender: string
     image:Buffer
 }
+
+export class UpdateProductDto {
+  item_qty?: number;
+  item_amount?: number;
+}

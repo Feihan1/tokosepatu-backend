@@ -1,8 +1,8 @@
 import { HttpService } from "@nestjs/axios";
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
 import   axios from "axios";
-import { CreateMstProduct } from "src/interfaces/admin.interface";
+import { CreateMstProduct, UpdateProductDto } from "src/interfaces/admin.interface";
 import { MstProduct } from "src/model/mst.product.model";
 
 
@@ -20,7 +20,7 @@ export class ProductService {
 
   async getAllProducts(): Promise<any> {
     try {
-      const products = await this.Product.findAll();
+      const products = await this.Product.findAll({where:{active:true},order: [['id', 'ASC']]});
       return products;
     } catch (error) {
       throw new Error("Failed to fetch products");
@@ -65,34 +65,26 @@ export class ProductService {
     console.log(imageUrl)
     return await this.Product.create({ ...createMstProduct, item_image_url: imageUrl });
   }
+
+  
+  async updateProduct(id: string, updateProductDto: UpdateProductDto): Promise<MstProduct> {
+    const product = await this.Product.findByPk(id);
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${id} not found`);
+    }
+
+    if (updateProductDto.item_qty !== undefined) {
+      product.item_qty = updateProductDto.item_qty;
+     
+    }
+
+    if (updateProductDto.item_amount !== undefined) {
+      product.item_amount = updateProductDto.item_amount;
+    }
+
+
+    await product.save(); // Menyimpan perubahan ke dalam basis data menggunakan model
+
+    return product;
+  }
 }
-
-// async uploadImageToImgur(fileBuffer: Buffer): Promise<string> {
-//   const imgurApiEndpoint = 'https://api.imgur.com/3/image';
-//   const clientId = 'f4b1ab3e14efe69'; // Ganti dengan Client ID Imgur Anda
-
-//   try {
-//     console.log("Tahap 1")
-//     const response = await axios.post(
-//       imgurApiEndpoint,
-//       {
-//         image: fileBuffer, // Ubah buffer menjadi base64
-//       },
-//       {
-//         headers: {
-//           Authorization: `Client-ID ${clientId}`,
-//           'Content-Type': 'multipart/form-data',
-//         },
-//       }
-//     );
-
-//     console.log("Tahap 2")
-//     const imageUrl = response.data.data.link;
-//     return imageUrl;
-
-//   } catch (error) {
-    
-//     console.error('Failed to upload image to Imgur:', error);
-//     throw new Error('Failed to upload image to Imgur');
-//   }
-// }

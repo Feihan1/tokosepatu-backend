@@ -1,7 +1,7 @@
-import { Controller, Post, Res, Body, Get, Param, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { Controller, Post, Res, Body, Get, Param, UploadedFile, UseInterceptors, Put, Patch } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiTags } from "@nestjs/swagger";
-import { CreateMstProduct } from "src/interfaces/admin.interface";
+import { CreateMstProduct, UpdateProductDto } from "src/interfaces/admin.interface";
 import { ProductService } from "src/services/products.service";
 
 @ApiTags("Admin Product Management")
@@ -37,4 +37,18 @@ export class ProductController {
       });
     }
   }
+
+@Patch('/update/:id')
+async updateProduct(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) : Promise<any> {
+
+  try {
+   const newProduct = await this.productService.updateProduct(id, updateProductDto);
+   
+   return { message: 'Product Updated Successfully', newProduct };
+  }
+  catch (error) {
+    console.error('Error creating product:', error);
+    throw new Error('Error creating product');
+  }
+}
 }
