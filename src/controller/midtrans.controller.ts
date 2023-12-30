@@ -19,14 +19,13 @@ export class MidtransController {
   @Post('/token')
 async createTransactionToken(@Res() res, @Body() request: CreatMidtransRequest): Promise<any> {
   try {
-    // Assuming you have 'cart_id' and 'total_price' in the request from the front end
+
     const { cart_id, total_amount } = request;
     
-    // Use the cart_id and total_price dynamically
     const parameter = {
       transaction_details: {
-        order_id: cart_id,  // Use the cart_id as order_id
-        gross_amount: total_amount,  // Use the total_price as gross_amount
+        order_id: cart_id,  
+        gross_amount: total_amount,  
       },
     };
 
