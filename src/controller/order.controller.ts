@@ -10,14 +10,14 @@ export class OrderController {
   @Post("/create")
   async createTransactionInvoice(@Res() res, @Body() payload: CreateTransactionRequest): Promise<any> {
     try{
-      const exists = await this.orderService.findExistingInvoiceData(payload.cart_id);
-
-      if(exists){
-        return res.status(HttpStatus.OK).json({message: "Success", data: exists});
-      } else {
-        const invoiceData = await this.orderService.createTransactionData(payload)
-        return res.status(HttpStatus.OK).json({message: "Success", data: invoiceData});
-      }
+    const exists = await this.orderService.findExistingInvoiceData(payload.cart_id);
+    if (exists) {
+      const updatedTransaction = await this.orderService.updateExistingTransaction(payload);
+      return res.status(HttpStatus.OK).json({ message: "Success", data: updatedTransaction });
+    } else {
+      const invoiceData = await this.orderService.createTransactionData(payload);
+      return res.status(HttpStatus.OK).json({ message: "Success", data: invoiceData });
+}
     }catch(error){
       console.log(error)
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message: "Whoops. Error occured"});

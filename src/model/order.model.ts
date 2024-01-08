@@ -98,22 +98,10 @@ export class OrderSales extends Model<OrderSales> {
         allowNull: false
     })
     total_amount: number;
-
-    // @Column({
-    //     type: DataType.STRING,
-    //     allowNull: false
-    // })
-    // delivery_courier: string
-
-    // @Column({
-    //     type: DataType.DECIMAL(10, 2),
-    //     allowNull: false
-    // })
-    // delivery_charge: number;
-
+    
     @Column({
         type: DataType.STRING,
-        defaultValue: () => crypto.randomBytes(24).toString('hex'),
+        defaultValue: () => crypto.randomBytes(10).toString('hex'),
     })
     transaction_number: string;
 

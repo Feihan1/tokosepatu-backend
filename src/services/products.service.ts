@@ -98,7 +98,7 @@ export class ProductService {
     }
 
 
-    await product.save(); // Menyimpan perubahan ke dalam basis data menggunakan model
+    await product.save(); 
 
     return product;
   }

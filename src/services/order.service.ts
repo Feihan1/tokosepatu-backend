@@ -23,7 +23,45 @@ export class OrderService {
   }
 
   async findExistingInvoiceDataByTrxID(id: string): Promise<any> {
-    return await this.Cart.findOne({include: { model: OrderSales, where: { transaction_number: id } }});
+    return await this.Cart.findOne({include: { model: OrderSales, where: { cart_id: id } }});
+  }
+ 
+  async updateExistingTransaction(payload: CreateTransactionRequest): Promise<any> {
+    let totalAmount = 0;
+    const transaction = await this.Cart.sequelize.transaction();
+  
+    try {
+      const cartData = await this.Cart.findOne({
+        where: { id: payload.cart_id },
+        include: { model: ProductSales },
+        transaction,
+      });
+  
+      for (const item of cartData.dataValues.product_item) {
+        let sumAmount: number = item.dataValues.item_qty * item.dataValues.item_amount;
+        totalAmount += sumAmount;
+      }
+  
+    
+      await this.transactionModel.destroy({
+        where: { cart_id: payload.cart_id },
+        transaction,
+      });
+  
+      const createOrder = await this.transactionModel.create(
+        { ...payload, total_amount: totalAmount },
+        { transaction }
+      );
+  
+      if (createOrder.dataValues) {
+        await transaction.commit();
+        return createOrder;
+      }
+    } catch (error) {
+      console.log(error);
+      await transaction.rollback();
+      throw new InternalServerErrorException('Whoops. Internal server error');
+    }
   }
 
   async createTransactionData(payload: CreateTransactionRequest): Promise<any> {
@@ -35,7 +73,6 @@ export class OrderService {
       for(const item of cartData.dataValues.product_item ){
         let sumAmount: number = item.dataValues.item_qty * item.dataValues.item_amount;
         totalAmount += sumAmount
-        const decreaseQtyProduct = await this.mstProduct.update({item_qty: sequelize.literal('item_qty - 1')}, { where: { id:  item.product_id}, transaction });
       }
       
       const createOrder = await this.transactionModel.create({...payload, total_amount: totalAmount} , {transaction});
@@ -55,18 +92,33 @@ export class OrderService {
 
     try {
       const order = await this.transactionModel.findOne({
-        where: { transaction_number: order_id },
+        where: { cart_id: order_id },
       });
 
       if (order) {
-        order.payment_method = payment_type; // Update payment method based on received notification
-        order.payment_status = OrderPaymentStatus.SUCCESS; // Assuming transaction is successful
+        order.payment_method = payment_type; 
+        order.payment_status = OrderPaymentStatus.SUCCESS; 
         await order.save();
+        const cartData = await this.Cart.findOne({
+          where: { id: order.cart_id },
+          include: { model: ProductSales },
+        });
+  
+        if (cartData) {
+          for (const item of cartData.dataValues.product_item) {
+            await this.mstProduct.update(
+              { item_qty: sequelize.literal('item_qty - 1') },
+              { where: { id: item.product_id } }
+            );
+          }
+        } else {
+          throw new Error('Cart not found');
+        }
       } else {
         throw new Error('Order not found');
       }
     } catch (error) {
-      throw new Error('Failed to update transaction status');
+      throw new Error('Failed to update transaction status and reduce product stock');
     }
   }
 }
