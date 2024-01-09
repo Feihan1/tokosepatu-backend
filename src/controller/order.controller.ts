@@ -1,5 +1,5 @@
 import { Body, Controller, HttpStatus, Patch, Post, Res } from '@nestjs/common';
-import { CreateTransactionRequest, UpdateStatusNotification } from 'src/interfaces/order.interfaces.dto';
+import { CreateTransactionRequest, OrderPaymentStatus, UpdateStatusNotification } from 'src/interfaces/order.interfaces.dto';
 import { OrderService } from '../services/order.service';
 import { CartService } from 'src/services/cart.service';
 
@@ -33,6 +33,13 @@ export class OrderController {
         return res.status(HttpStatus.BAD_REQUEST).json({message: "Cannot find data"});
       } else {
         const invoiceData = await this.orderService.updateTransactionStatus(body);
+       
+        if (OrderPaymentStatus.SUCCESS) {
+        
+          await this.orderService.reduceProductStock(exists.dataValues.id);
+          console.log('Product stock reduced successfully');
+        }
+  
         const deleteCart = await this.cartService.deleteCart(exists.dataValues.id);
         return res.status(HttpStatus.OK).json({message: "Success"});
       }

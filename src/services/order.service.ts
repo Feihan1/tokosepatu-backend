@@ -23,7 +23,7 @@ export class OrderService {
   }
 
   async findExistingInvoiceDataByTrxID(id: string): Promise<any> {
-    return await this.Cart.findOne({include: { model: OrderSales, where: { cart_id: id } }});
+    return await this.Cart.findOne({include: { model: OrderSales, where: { transaction_number: id } }});
   }
  
   async updateExistingTransaction(payload: CreateTransactionRequest): Promise<any> {
@@ -92,33 +92,35 @@ export class OrderService {
 
     try {
       const order = await this.transactionModel.findOne({
-        where: { cart_id: order_id },
+        where: { transaction_number: order_id },
       });
 
       if (order) {
         order.payment_method = payment_type; 
         order.payment_status = OrderPaymentStatus.SUCCESS; 
         await order.save();
-        const cartData = await this.Cart.findOne({
-          where: { id: order.cart_id },
-          include: { model: ProductSales },
-        });
-  
-        if (cartData) {
-          for (const item of cartData.dataValues.product_item) {
-            await this.mstProduct.update(
-              { item_qty: sequelize.literal('item_qty - 1') },
-              { where: { id: item.product_id } }
-            );
-          }
-        } else {
-          throw new Error('Cart not found');
-        }
       } else {
         throw new Error('Order not found');
       }
     } catch (error) {
       throw new Error('Failed to update transaction status and reduce product stock');
+    }
+  }
+  async reduceProductStock(cartId: number): Promise<void> {
+    const cartData = await this.Cart.findOne({
+      where: { id: cartId },
+      include: { model: ProductSales },
+    });
+  
+    if (cartData) {
+      for (const item of cartData.dataValues.product_item) {
+        await this.mstProduct.update(
+          { item_qty: sequelize.literal(`item_qty - 1`) },
+          { where: { id: item.product_id } }
+        );
+      }
+    } else {
+      throw new Error(`Cart with ID ${cartId} not found`);
     }
   }
 }

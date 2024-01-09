@@ -11,8 +11,8 @@ export class MidtransController {
   constructor() {
     this.snap = new midtransClient.Snap({
       isProduction: false,
-      serverKey: "SB-Mid-server-07J1B-cF976zfSafnqGGOtmN",
-      clientKey: "SB-Mid-client-orNXPW9gwjn9En6r",
+      serverKey: process.env.NEW_SECRET,
+      clientKey: process.env.NEW_CLIENT,
     });
   }
 
