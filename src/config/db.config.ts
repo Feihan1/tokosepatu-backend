@@ -23,7 +23,7 @@ const sequelizeConfig: SequelizeModuleOptions = {
   
 };
 export const getJwtSecret = (): string | undefined => {
-  return process.env.JWT_SECRET;
+  return process.env.JWT_TOKEN;
 };
 
 export default sequelizeConfig;

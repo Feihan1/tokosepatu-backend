@@ -11,8 +11,8 @@ export class MidtransController {
   constructor() {
     this.snap = new midtransClient.Snap({
       isProduction: false,
-      serverKey: process.env.NEW_SECRET,
-      clientKey: process.env.NEW_CLIENT,
+      serverKey: process.env.MT_SERVER_KEY,
+      clientKey: process.env.MT_CLIENT_KEY,
     });
   }
 
@@ -20,14 +20,23 @@ export class MidtransController {
 async createTransactionToken(@Res() res, @Body() request: CreatMidtransRequest): Promise<any> {
   try {
 
-    const { cart_id, total_amount } = request;
+    const { cart_id, total_amount , name ,email,phone,address,city,postal_code} = request;
     
     const parameter = {
       transaction_details: {
         order_id: cart_id,  
         gross_amount: total_amount,  
       },
-    };
+      customer_details: {
+        first_name:name ,
+          billing_address: {
+            first_name:name,   
+      },
+        shipping_address: {
+          first_name:name,
+      }
+    },
+  }
 
     const token = await this.snap.createTransactionToken(parameter);
     console.log(token);

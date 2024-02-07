@@ -118,4 +118,15 @@ export class ProductService {
 async readTransactionList(): Promise<any> {
   return await this.Cart.findAll({include: [{ model: ProductSales }, { model: OrderSales }]})
 }
+
+async deleteProductonDB(id: string): Promise<void> {
+  
+  const product = await this.Product.findByPk(id);
+
+  if (!product) {
+    throw new NotFoundException(`Product with ID ${id} not found`);
+  }
+
+  await product.destroy();
+}
 }

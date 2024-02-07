@@ -56,6 +56,12 @@ async deleteProduct(@Param('id') id: string) {
   return this.productService.deleteProduct(id);
 }
 
+@Delete('/deleteOnDB/:id')
+async deleteProductonDB(@Param('id') id: string) {
+  return this.productService.deleteProductonDB(id);
+}
+
+
 @Get('/transaction-list')
 async readTransaction (@Res()res) : Promise<any> {
 const response = await this.productService.readTransactionList();

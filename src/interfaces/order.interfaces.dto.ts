@@ -51,7 +51,23 @@ export class CreatMidtransRequest {
     @ApiProperty()
     total_amount: number
 
+    @ApiProperty()
+    name: string
+
+    @ApiProperty()
+    email: string
+
+    @ApiProperty()
+    phone: number
     
+    @ApiProperty()
+    address: string
+
+    @ApiProperty()
+    city: string
+
+    @ApiProperty()
+    postal_code: string
 }
 
 export class UpdateStatusNotificationTransactionVA {
