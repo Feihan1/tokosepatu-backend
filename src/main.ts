@@ -7,7 +7,7 @@ import { AuthService } from './services/auth.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: ['https://tokosepatu-1kqp-dtkf3r6ku-mylazarks-projects.vercel.app', 'https://admindashboard-seven-lemon.vercel.app'], // Add more origins here if necessary
+    origin: ['tokosepatu-1kqp.vercel.app', 'admindashboard-seven-lemon.vercel.app'], // Add more origins here if necessary
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
@@ -19,7 +19,9 @@ async function bootstrap() {
 const document = SwaggerModule.createDocument(app, config);
 SwaggerModule.setup('api', app, document);
 const authService = app.get(AuthService)
+const port = process.env.PORT
   await authService.initializeAdmin();
-  await app.listen(process.env.PORT);
+  await app.listen(port);
+
 }
 bootstrap();
