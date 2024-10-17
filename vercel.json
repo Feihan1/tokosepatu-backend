@@ -2,7 +2,7 @@
     "version": 2,
     "functions": {
       "src/main.ts": {
-        "runtime": "nodejs18.x"
+        "runtime": "nodejs18.12.1"
       }
     },
     "routes": [
