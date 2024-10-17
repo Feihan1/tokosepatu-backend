@@ -6,7 +6,11 @@ import { AuthService } from './services/auth.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+  app.enableCors({
+    origin: ['http://localhost:3001', 'https://your-frontend-domain.com'], // Allow specific origins
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,  // Set to true if you need to include cookies
+  });
   const config = new DocumentBuilder()
   .setTitle('Backend API Documentation')
   .setDescription('Documentation for cart and order')
