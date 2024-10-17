@@ -1,0 +1,18 @@
+{
+    "version": 2,
+    "buillds": [
+        {
+            "src": "src/main.ts",
+            "user":"@verscel/node"
+        }
+    ],
+    "routes": [
+        {
+            "src":"/(.*)",
+            "dest": "src/main.ts"
+        }
+    ]
+
+
+
+}
