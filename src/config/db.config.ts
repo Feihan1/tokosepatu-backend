@@ -4,22 +4,28 @@ import { Dialect } from 'sequelize';
 require('dotenv').config();
 
 const sequelizeConfig: SequelizeModuleOptions = {
-  dialect: process.env.DB_DIALECT as Dialect, // 'postgres'
-  host: process.env.DB_HOST, // Alamat host database
-  port: parseInt(process.env.DB_PORT, 10), // Port database
-  username: process.env.DB_USERNAME, // Username database
-  password: process.env.DB_PASSWORD, // Password database
-  database: process.env.DB_NAME, // Nama database
+  dialect: process.env.DB_DIALECT as Dialect,
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT),
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   autoLoadModels: true,
-  synchronize: true, // Hati-hati, ini akan menyinkronkan tabel di database
+  synchronize: true,
   logging: false,
+  dialectOptions: {
+    ssl: {
+      require: true, // Enable SSL for Supabase connection
+      rejectUnauthorized: false, // This is important for Supabase
+    },
+  },
   sync: {
-    force: false, // WARNING: Jika true, tabel akan dihapus dan dibuat ulang setiap kali server dinyalakan
-    alter: { drop: true }
+    force: false,
+    alter: { drop: false },
   },
   define: {
-    timestamps: true, // Menggunakan timestamp
-    underscored: true, // Menggunakan format snake_case untuk kolom
+    timestamps: true,
+    underscored: true,
   },
 };
 
