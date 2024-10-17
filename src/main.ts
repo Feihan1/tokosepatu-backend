@@ -7,9 +7,9 @@ import { AuthService } from './services/auth.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: ['http://localhost:3001', 'https://your-frontend-domain.com'], // Allow specific origins
+    origin: ['https://tokosepatu-1kqp-dtkf3r6ku-mylazarks-projects.vercel.app', 'https://admindashboard-seven-lemon.vercel.app'], // Add more origins here if necessary
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,  // Set to true if you need to include cookies
+    credentials: true,
   });
   const config = new DocumentBuilder()
   .setTitle('Backend API Documentation')
