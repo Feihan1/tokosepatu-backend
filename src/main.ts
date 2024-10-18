@@ -6,16 +6,7 @@ import { AuthService } from './services/auth.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
-  const allowedOrigins = [
-    'https://admindashboard-seven-lemon.vercel.app',
-    'https://tokosepatu-1kqp.vercel.app',
-  ];
-  app.enableCors({
-    origin: "*", 
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: 'Content-Type,Authorization',
-  });
+  app.enableCors();
   const config = new DocumentBuilder()
   .setTitle('Backend API Documentation')
   .setDescription('Documentation for cart and order')
