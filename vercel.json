@@ -10,10 +10,9 @@
     {
       "src": "/(.*)",
       "headers": {
-        "Access-Control-Allow-Origin":"https://admindashboard-seven-lemon.vercel.app, https://tokosepatu-1kqp.vercel.app",  
+        "Access-Control-Allow-Origin":"*",  
         "Access-Control-Allow-Methods": "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        "Access-Control-Allow-Credentials": "true"
+        "Access-Control-Allow-Headers": "Content-Type,Authorization"     
       },
       "dest": "dist/main.js"
     
