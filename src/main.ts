@@ -7,9 +7,10 @@ import { AuthService } from './services/auth.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: ['tokosepatu-1kqp.vercel.app', 'admindashboard-seven-lemon.vercel.app'], // Add more origins here if necessary
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    origin: ['https://tokosepatu-1kqp.vercel.app', 'https://admindashboard-seven-lemon.vercel.app'], // Add more origins here if necessary
+    methods:  ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
+    allowedHeaders: 'Content-Type,Authorization',
   });
   const config = new DocumentBuilder()
   .setTitle('Backend API Documentation')
