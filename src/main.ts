@@ -10,7 +10,7 @@ async function bootstrap() {
   const allowedOrigins = [
     'https://admindashboard-seven-lemon.vercel.app',
     'https://tokosepatu-1kqp.vercel.app',
-  ];
+  ];//Commit
 
   app.enableCors({
     origin: (origin, callback) => {
