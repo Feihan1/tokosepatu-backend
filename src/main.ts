@@ -6,8 +6,20 @@ import { AuthService } from './services/auth.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const allowedOrigins = [
+    'https://admindashboard-seven-lemon.vercel.app',
+    'https://tokosepatu-1kqp.vercel.app',
+  ];
+
   app.enableCors({
-    origin: ['https://tokosepatu-1kqp.vercel.app', 'https://admindashboard-seven-lemon.vercel.app'], // Add more origins here if necessary
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, origin); // Allow the specific origin or no origin (for server-side requests)
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods:  ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
     allowedHeaders: 'Content-Type,Authorization',
